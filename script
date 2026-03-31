@@ -1,0 +1,213 @@
+// ============================================================
+// script.js – Formulario de Contacto
+// Taller de Plataformas Web – Semana 2
+// ============================================================
+
+// ----------------------------------------------------------
+// 1. SELECCIÓN DE ELEMENTOS DEL DOM
+// Se capturan las referencias a los campos del formulario
+// y los contenedores de mensajes de error/estado.
+// ----------------------------------------------------------
+const form        = document.getElementById('contactForm');
+const inputNombre = document.getElementById('nombre');
+const inputCorreo = document.getElementById('correo');
+const inputMsg    = document.getElementById('mensaje');
+const btnEnviar   = document.getElementById('btnEnviar');
+const statusMsg   = document.getElementById('statusMsg');
+
+const errorNombre = document.getElementById('error-nombre');
+const errorCorreo = document.getElementById('error-correo');
+const errorMensaje = document.getElementById('error-mensaje');
+
+// ----------------------------------------------------------
+// 2. EXPRESIONES REGULARES (RegExp) PARA VALIDACIÓN
+// Se utiliza RegExp para validar el formato de cada campo.
+// ----------------------------------------------------------
+
+// Solo letras (incluyendo tildes y ñ), espacios. Mín. 2 chars.
+const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,}$/;
+
+// Formato estándar de correo electrónico.
+const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// El mensaje debe tener al menos 10 caracteres.
+const regexMensaje = /^[\s\S]{10,}$/;
+
+// ----------------------------------------------------------
+// 3. FUNCIÓN DE VALIDACIÓN DE UN CAMPO
+// Recibe el campo de entrada, la expresión regular y los
+// elementos de error y retroalimentación visual.
+// Retorna true si el campo es válido, false si no.
+// ----------------------------------------------------------
+const validarCampo = (campo, regex, elementoError, mensajeError) => {
+  const valor = campo.value.trim();
+
+  if (valor === '') {
+    // Campo vacío: se muestra error y se marca visualmente
+    elementoError.textContent = 'Este campo es obligatorio.';
+    campo.classList.remove('valid');
+    campo.classList.add('invalid');
+    return false;
+  }
+
+  if (!regex.test(valor)) {
+    // Formato incorrecto: se muestra el mensaje de error específico
+    elementoError.textContent = mensajeError;
+    campo.classList.remove('valid');
+    campo.classList.add('invalid');
+    return false;
+  }
+
+  // Campo válido: se limpia el error y se marca como válido
+  elementoError.textContent = '';
+  campo.classList.remove('invalid');
+  campo.classList.add('valid');
+  return true;
+};
+
+// ----------------------------------------------------------
+// 4. EVENTOS DOM – VALIDACIÓN EN TIEMPO REAL (evento: blur)
+// El evento 'blur' se dispara cuando el usuario sale del campo.
+// Permite mostrar errores a medida que completa el formulario,
+// sin esperar al envío.
+// ----------------------------------------------------------
+
+inputNombre.addEventListener('blur', () => {
+  validarCampo(
+    inputNombre,
+    regexNombre,
+    errorNombre,
+    'Ingresa un nombre válido (solo letras, mínimo 2 caracteres).'
+  );
+});
+
+inputCorreo.addEventListener('blur', () => {
+  validarCampo(
+    inputCorreo,
+    regexCorreo,
+    errorCorreo,
+    'Ingresa un correo electrónico válido (ej: usuario@dominio.com).'
+  );
+});
+
+inputMsg.addEventListener('blur', () => {
+  validarCampo(
+    inputMsg,
+    regexMensaje,
+    errorMensaje,
+    'El mensaje debe tener al menos 10 caracteres.'
+  );
+});
+
+// ----------------------------------------------------------
+// 5. EVENTOS DOM – LIMPIEZA DE ERRORES EN TIEMPO REAL (evento: input)
+// El evento 'input' detecta cada pulsación de tecla.
+// Revalida el campo mientras el usuario escribe, para que
+// el error desaparezca en cuanto el formato sea correcto.
+// ----------------------------------------------------------
+
+inputNombre.addEventListener('input', () => {
+  if (inputNombre.classList.contains('invalid')) {
+    validarCampo(inputNombre, regexNombre, errorNombre,
+      'Ingresa un nombre válido (solo letras, mínimo 2 caracteres).');
+  }
+});
+
+inputCorreo.addEventListener('input', () => {
+  if (inputCorreo.classList.contains('invalid')) {
+    validarCampo(inputCorreo, regexCorreo, errorCorreo,
+      'Ingresa un correo electrónico válido (ej: usuario@dominio.com).');
+  }
+});
+
+inputMsg.addEventListener('input', () => {
+  if (inputMsg.classList.contains('invalid')) {
+    validarCampo(inputMsg, regexMensaje, errorMensaje,
+      'El mensaje debe tener al menos 10 caracteres.');
+  }
+});
+
+// ----------------------------------------------------------
+// 6. FUNCIÓN: SIMULAR ENVÍO CON PROMESA (Promise)
+// Simula el envío de datos al servidor mediante una promesa
+// que resuelve o rechaza de forma aleatoria tras 2 segundos.
+// Esto representa la latencia de red y posibles fallos del servidor.
+// ----------------------------------------------------------
+const simularEnvio = (datos) => {
+  return new Promise((resolve, reject) => {
+    // Espera artificial de 2000ms (2 segundos)
+    setTimeout(() => {
+      // Probabilidad de fallo del 30% para simular errores del servidor
+      const hayError = Math.random() < 0.3;
+
+      if (hayError) {
+        // La promesa se rechaza: simula fallo en el servidor
+        reject(new Error('Error del servidor: no se pudo procesar la solicitud.'));
+      } else {
+        // La promesa se resuelve: envío exitoso
+        resolve({ status: 200, mensaje: '¡Mensaje enviado correctamente!' });
+      }
+    }, 2000);
+  });
+};
+
+// ----------------------------------------------------------
+// 7. EVENTO DOM – ENVÍO DEL FORMULARIO (evento: submit)
+// El evento 'submit' intercepta el envío nativo del formulario.
+// Se validan todos los campos antes de proceder con la promesa.
+// ----------------------------------------------------------
+form.addEventListener('submit', async (evento) => {
+  // Previene el comportamiento predeterminado (recarga de página)
+  evento.preventDefault();
+
+  // Validar los tres campos antes de continuar
+  const nombreValido  = validarCampo(inputNombre, regexNombre, errorNombre,
+    'Ingresa un nombre válido (solo letras, mínimo 2 caracteres).');
+  const correoValido  = validarCampo(inputCorreo, regexCorreo, errorCorreo,
+    'Ingresa un correo electrónico válido (ej: usuario@dominio.com).');
+  const mensajeValido = validarCampo(inputMsg, regexMensaje, errorMensaje,
+    'El mensaje debe tener al menos 10 caracteres.');
+
+  // Si algún campo no es válido, se detiene el proceso
+  if (!nombreValido || !correoValido || !mensajeValido) return;
+
+  // Datos del formulario listos para enviar
+  const datos = {
+    nombre:  inputNombre.value.trim(),
+    correo:  inputCorreo.value.trim(),
+    mensaje: inputMsg.value.trim()
+  };
+
+  // Mostrar estado "enviando" y deshabilitar el botón
+  btnEnviar.disabled = true;
+  statusMsg.className = 'status-msg enviando';
+  statusMsg.textContent = 'Enviando mensaje, por favor espera...';
+
+  // ----------------------------------------------------------
+  // 8. MANEJO DE LA PROMESA CON async/await
+  // Se usa try/catch para manejar tanto el éxito (resolve)
+  // como el error (reject) de la promesa de forma clara.
+  // ----------------------------------------------------------
+  try {
+    const respuesta = await simularEnvio(datos);
+
+    // Envío exitoso: se muestra mensaje de éxito
+    statusMsg.className = 'status-msg exito';
+    statusMsg.textContent = respuesta.mensaje;
+
+    // Limpiar el formulario y restablecer estilos
+    form.reset();
+    [inputNombre, inputCorreo, inputMsg].forEach(campo => {
+      campo.classList.remove('valid', 'invalid');
+    });
+
+  } catch (error) {
+    // Error de envío: se muestra el mensaje de rechazo de la promesa
+    statusMsg.className = 'status-msg error';
+    statusMsg.textContent = `Error: ${error.message} Intenta nuevamente.`;
+
+  } finally {
+    // En cualquier caso, se vuelve a habilitar el botón
+    btnEnviar.disabled = false;
+  }
+});
