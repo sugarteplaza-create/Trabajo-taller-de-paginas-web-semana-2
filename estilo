@@ -1,0 +1,146 @@
+/* ===========================
+   Estilos generales
+=========================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ===========================
+   Contenedor principal
+=========================== */
+.container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+}
+
+h1 {
+  text-align: center;
+  color: #1a1a2e;
+  margin-bottom: 28px;
+  font-size: 1.6rem;
+}
+
+/* ===========================
+   Grupos de formulario
+=========================== */
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+input,
+textarea {
+  padding: 10px 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  transition: border-color 0.25s;
+  outline: none;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #4a90d9;
+}
+
+/* Estado de error visual en el campo */
+input.invalid,
+textarea.invalid {
+  border-color: #e74c3c;
+}
+
+/* Estado válido visual en el campo */
+input.valid,
+textarea.valid {
+  border-color: #2ecc71;
+}
+
+/* ===========================
+   Mensajes de error
+=========================== */
+.error-msg {
+  color: #e74c3c;
+  font-size: 0.82rem;
+  margin-top: 4px;
+  min-height: 18px;
+}
+
+/* ===========================
+   Botón de envío
+=========================== */
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #4a90d9;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+button[type="submit"]:hover {
+  background-color: #357abd;
+}
+
+button[type="submit"]:disabled {
+  background-color: #9ab8d8;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   Área de estado del envío
+=========================== */
+.status-msg {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 0.92rem;
+  text-align: center;
+  display: none; /* oculto por defecto */
+}
+
+.status-msg.enviando {
+  display: block;
+  background-color: #eaf3fb;
+  color: #2980b9;
+}
+
+.status-msg.exito {
+  display: block;
+  background-color: #eafaf1;
+  color: #27ae60;
+}
+
+.status-msg.error {
+  display: block;
+  background-color: #fdedec;
+  color: #e74c3c;
+}
