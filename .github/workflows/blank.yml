@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulario de Contacto</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Formulario de Contacto</h1>
+
+    <form id="contactForm" novalidate>
+
+      <!-- Campo Nombre -->
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          placeholder="Ingresa tu nombre completo"
+          autocomplete="off"
+        />
+        <span class="error-msg" id="error-nombre"></span>
+      </div>
+
+      <!-- Campo Correo electrónico -->
+      <div class="form-group">
+        <label for="correo">Correo electrónico</label>
+        <input
+          type="email"
+          id="correo"
+          name="correo"
+          placeholder="ejemplo@correo.com"
+          autocomplete="off"
+        />
+        <span class="error-msg" id="error-correo"></span>
+      </div>
+
+      <!-- Campo Mensaje -->
+      <div class="form-group">
+        <label for="mensaje">Mensaje</label>
+        <textarea
+          id="mensaje"
+          name="mensaje"
+          rows="5"
+          placeholder="Escribe tu mensaje aquí..."
+        ></textarea>
+        <span class="error-msg" id="error-mensaje"></span>
+      </div>
+
+      <!-- Botón enviar -->
+      <button type="submit" id="btnEnviar">Enviar</button>
+
+      <!-- Área de estado del envío -->
+      <div id="statusMsg" class="status-msg"></div>
+
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
